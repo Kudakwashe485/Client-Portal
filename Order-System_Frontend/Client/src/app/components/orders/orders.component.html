@@ -1,0 +1,69 @@
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 d-flex align-items-center" href="#">
+    <img src="https://th.bing.com/th/id/OIP.tzk_hajKnhC6djcM2pyyJAHaHa?w=180&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" class="avatar me-2" alt="">
+    <span> <a class="nav-link active me-2" routerLink="/products">Home</a></span>
+    <span><a class="nav-link me-2" routerLink="/orders">Orders</a></span>
+  </a>
+  <div class="navbar-nav ms-auto flex-row">
+    <a style="background: red; color: #fff; border-radius: 4px; margin: 10px; padding: 6px 12px;"
+       class="nav-link cursor-pointer" (click)="logout()">Sign out</a>
+  </div>
+</header>
+
+  <main style="width: 75rem; margin-left: 5rem;">
+
+      <h3 class="header-title">View Orders</h3>
+      <div style="margin-left: 40%;">
+        <input type="hidden" placeholder="Enter your email address" style="width: 200px; border: 1px solid #ccc; padding: 5px; border-radius: 5px; flex: 1;" value="{{email}}">
+        <button (click)="getOrder(email)" style="background: #8cb6f9; border: 1px solid #ccc; padding: 5px; border-radius: 5px; width: 7rem;">
+         Load
+        </button>
+      <button mat-icon-button (click)="openHelpModal('itemName')" aria-label="Help" class="help-button">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+    <div *ngIf="orderActionLoading" class="loader-container">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+      <p class="loading-message">Processing...</p>
+    </div><br>
+    <div *ngIf="!orderActionLoading"> 
+      <div class="table-responsive">
+        <table class="table table-striped table-hover table-container outlined-table">
+          <thead class="tableColor">
+            <tr>
+              <th scope="col">Order # </th>
+              <th scope="col">Product </th>
+              <th scope="col">FirstName</th>
+              <th scope="col">LastName</th>
+              <th scope="col">Contact Number</th>
+              <th scope="col">Email</th>
+              <th scope="col">Address</th>
+              <th scope="col">Status</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of filteredorders">
+              <td>{{ order.orderNumber }}</td>
+              <td>{{ order.productname }}</td>
+              <td>{{ order.firstName }}</td>
+              <td>{{ order.lastName }}</td>
+              <td>{{ order.contactNumber }}</td>
+              <td>{{ order.email }}</td>
+              <td>{{ order.address }}</td>
+              <td style="color: #ff0000;">{{ order.orderStatus}}</td>
+              <td>{{ order.price }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>{{ order.total }}</td>
+            </tr>
+            <tr *ngIf="filteredorders.length === 0">
+              <td colspan="10" style="text-align: center;">No orders found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  
