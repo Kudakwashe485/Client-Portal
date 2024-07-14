@@ -53,6 +53,7 @@ jobs:
           creds: ${{ secrets.AZURE_CLIENT_SECRET }}
           environment: 'azurecloud'
           allow-no-subscriptions: false
+          auth-type: 'service-principal'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
