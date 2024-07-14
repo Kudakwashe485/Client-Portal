@@ -57,7 +57,7 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3DF079F42B404381A4285F490D90F3A7 }}
           environment: 'azurecloud'
           allow-no-subscriptions: false
-          auth-type: 'service-principal'
+          auth-type: 'servicePrincipal'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
