@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - ClientPortalSystem
+name: Build and Deploy ASP.Net Core app to Azure Web App
 
 on:
   push:
@@ -14,24 +11,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0' # Adjust to a version that supports .NET 8.0
+
+      - name: Restore dependencies
+        run: dotnet restore Order_System/Order_System.csproj
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build Order_System/Order_System.csproj --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish with dotnet
+        run: dotnet publish Order_System/Order_System.csproj --configuration Release --output "C:\Program Files\dotnet\myapp"
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: dotnet-app
+          path: "C:\Program Files\dotnet\myapp"
 
   deploy:
     runs-on: windows-latest
@@ -39,27 +40,22 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v2
         with:
-          name: .net-app
-      
+          name: dotnet-app
+
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_07EB3C54AC7746D29349B0F519852B00 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_94A22AC730EE40AB8E685244A54AA0D2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_157947117E6F4AF891D95B8B1D6FB1ED }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'ClientPortalSystem'
+          app-name: 'DeploymentTrail'
           slot-name: 'Production'
-          package: .
-          
+          package: ${{ github.workspace }}/myapp
