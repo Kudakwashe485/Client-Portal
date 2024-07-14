@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy ASP.Net Core app to Azure Web App - DeploymentTrail
 
 on:
@@ -22,13 +25,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\myapp  # Adjusted path with backslash
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: dotnet-app
-          path: ${{env.DOTNET_ROOT}}\myapp  # Adjusted path with backslash
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -36,19 +39,21 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-app
+          name: .net-app
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5D2B56D82C0E4F9D8696A20290FF23C3 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F7125F82D88E4D96A9E3625072BCBFE4 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5B2012DCC7C141B284F6471E6FFCF061 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2D23BCDEDDAA4D9A840EF7B7A3D24612 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8D9366ABDA104AD0BA6A890F8F634E04 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3DF079F42B404381A4285F490D90F3A7 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -56,4 +61,5 @@ jobs:
         with:
           app-name: 'DeploymentTrail'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/dotnet-app  # Adjusted path to use uploaded artifact
+          package: .
+          
